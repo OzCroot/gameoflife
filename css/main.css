@@ -1,0 +1,29 @@
+html,
+body {
+	width: 100%;
+	height: 100%;
+}
+
+#wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: #eee;
+}
+
+#holder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	border: 1px solid #000;
+}
+
+i {
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+	border: 1px solid #000;
+}
+
+i.active {background: #000;}
+i.neighbour {background: #c55;}
