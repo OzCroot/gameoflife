@@ -25,5 +25,5 @@ i {
 	border: 1px solid #000;
 }
 
-i.active {background: #000;}
+i.alive {background: #000;}
 i.neighbour {background: #c55;}

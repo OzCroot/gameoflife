@@ -1,8 +1,9 @@
 $(function(){
 	var $wrapper = $("#wrapper");
-	var size = 20;
-	var cols = 40;
-	var rows = 40;
+	var size = 5;
+	var cols = 20;
+	var rows = 20;
+	var border = 0;
 	var $holder = $('<div id="holder" />');
 	var cells = [];
 	var $cells;
@@ -19,7 +20,8 @@ $(function(){
 					left: size * row,
 					top: size * col,
 					width: size,
-					height: size
+					height: size,
+					borderWidth: border
 				}).data({
 					row: row,
 					col: col
@@ -31,29 +33,50 @@ $(function(){
 
 	$holder.append(cells);
 	$cells = $holder.children();
+	$holder.find("i:nth-child(-n+4)").addClass('alive');
 
-	$holder.on('click', 'i', function(){
-		var $this = $(this).addClass('active'),
-			selection = '';
 
-		// Previous row.
-		var before = '.c-'+($this.data('col')-1)+'-r-';
-		selection += before + ($this.data('row')-1)+',';
-		selection += before + $this.data('row')+',';
-		selection += before + ($this.data('row')+1)+',';
+	window.cycle = function(){
+		var $kill = null;
+		var $birth = null;
 
-		// Current row.
-		var current = '.c-'+$this.data('col')+'-r-';
-		selection += current + ($this.data('row')-1)+',';
-		selection += current + ($this.data('row')+1)+',';
+		$cells.each(function(){
+			var $this = $(this),
+				selection = '';
 
-		// After row.
-		var after = '.c-'+($this.data('col')+1)+'-r-';
-		selection += after + ($this.data('row')-1)+',';
-		selection += after + $this.data('row')+',';
-		selection += after + ($this.data('row')+1);
+			// Previous row.
+			var before = '.c-'+($this.data('col')-1)+'-r-';
+			selection += before + ($this.data('row')-1)+',';
+			selection += before + $this.data('row')+',';
+			selection += before + ($this.data('row')+1)+',';
 
-		$cells.removeClass('neighbour');
-		$holder.find(selection).addClass('neighbour');
-	});
+			// Current row.
+			var current = '.c-'+$this.data('col')+'-r-';
+			selection += current + ($this.data('row')-1)+',';
+			selection += current + ($this.data('row')+1)+',';
+
+			// After row.
+			var after = '.c-'+($this.data('col')+1)+'-r-';
+			selection += after + ($this.data('row')-1)+',';
+			selection += after + $this.data('row')+',';
+			selection += after + ($this.data('row')+1);
+
+			var $neighbours = $holder.find(selection);
+			var $aliveNeighbours = $neighbours.filter('.alive');
+			// var $emptyNeighbours = $neighbours.filter(':not(.alive)');
+
+			// Death due to isolation or overcrowding.
+			if ($aliveNeighbours.length <= 1 || $aliveNeighbours.length >= 4) {
+				$kill = ($kill) ? $kill.add($this) : $this;
+			}
+			else {
+				$birth = ($birth) ? $birth.add($this) : $this;
+			}
+		});
+
+		$kill.removeClass('alive');
+		$birth.addClass('alive');
+	};
+
+	var lifeCycle = setInterval(cycle, 100);
 });
