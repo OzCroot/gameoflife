@@ -6,7 +6,7 @@
 
 var $ = require('jquery');
 
-module.exports = function(data, rowsCount){
+module.exports = function(data){
 	var selection = '';
 
 	var neighbourRange = function(col, row){
@@ -15,10 +15,9 @@ module.exports = function(data, rowsCount){
 			min = row-1,
 			max = row+1;
 
-		if (min >= 0) str += base + min + ',';
+		str += base + min + ',';
 		str += base + row + ',';
-		if (max < rowsCount) str += base + max;
-		else str = str.replace(/,\s*$/, "");
+		str += base + max + ',';
 
 		return str;
 	};
@@ -26,6 +25,9 @@ module.exports = function(data, rowsCount){
 	selection += neighbourRange(data.col-1, data.row);
 	selection += neighbourRange(data.col, data.row);
 	selection += neighbourRange(data.col+1, data.row);
+
+	// Remove trailing ',' from selection string.
+	selection = selection.substr(0, selection.length - 1);
 
 	return selection;
 };

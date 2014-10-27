@@ -35,8 +35,8 @@ module.exports = (function(){
 					var $i = $('<i />')
 						.addClass('c-'+col + '-r-'+row)
 						.css({
-							left: grid.size * row,
-							top: grid.size * col,
+							left: grid.size * col,
+							top: grid.size * row,
 							width: grid.size,
 							height: grid.size,
 							borderWidth: grid.border
@@ -47,8 +47,9 @@ module.exports = (function(){
 					_private.$cells = (_private.$cells) ? _private.$cells.add($i) : $i;
 				}
 			}
+
 			_private.$holder.append(_private.$cells);
-			_private.$holder.find("i:nth-child(-n+4)").addClass('alive');
+			_private.$holder.find("i:nth-child(-n+15)").addClass('alive');
 		}
 	}
 })();

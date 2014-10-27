@@ -1,34 +1,40 @@
 var $ = require('jquery');
 var selection = require('./selection.js');
-var defaults = require('./defaults.js');
+var stateManager = require('./stateManager.js');
 
-module.exports = function($cells, duration){
+module.exports = function($cells, rules){
 	var _private = {
 		lifeInterval: null,
 		iterator: function(){
-			var $life,$death;
-
 			for (var i = $cells.length - 1; i >= 0; i--) {
 				var $cell = $($cells[i]),
 					$neighbours = $(selection($cell.data())),
 					$aliveNeighbours = $neighbours.filter('.alive');
 
-				if ($aliveNeighbours.length <= defaults.rules.POPULATION_UNDER || $aliveNeighbours.length >= defaults.rules.POPULATION_OVER) {
-					$death = ($death) ? $death.add($cell) : $cell;
+				// Cell is alive.
+				if ($cell.hasClass('alive')) {
+					if ($aliveNeighbours.length <= rules.POPULATION_UNDER || $aliveNeighbours.length >= rules.POPULATION_OVER) {
+						stateManager.addState('$death', $cell);
+					}
 				}
 				else {
-					$life = ($life) ? $life.add($cell) : $cell;
+					if ($aliveNeighbours.length >= rules.POPULATION_BIRTH) {
+						stateManager.addState('$life', $cell);
+					}
 				}
-			};
+			}
 
-			if ($death) $death.removeClass('alive');
-			if ($life) $life.addClass('alive');
+			stateManager.setStates();
+			stateManager.reset();
 		}
 	};
 
 	return {
 		loop: function(duration){
 			_private.lifeInterval = setInterval(_private.iterator, duration);
+		},
+		stop: function(){
+			clearInterval(_private.lifeInterval);
 		}
 	}
 };
